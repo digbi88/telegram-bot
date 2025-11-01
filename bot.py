@@ -2,11 +2,16 @@ from telegram.ext import Application, CommandHandler
 import random
 import os
 
-# Токен встроен в код для тестирования
-BOT_TOKEN = "8189236321:AAExF6UWrS4ksDb--FdJwvq0HciSDqoMWeg"
+# Безопасное получение токена из переменных окружения
+BOT_TOKEN = os.environ.get('BOT_TOKEN')
 
-print("✅ Используется встроенный токен")
-print(f"Длина токена: {len(BOT_TOKEN)}")
+# Проверяем, что токен установлен
+if not BOT_TOKEN:
+    print("❌ ОШИБКА: BOT_TOKEN не найден в переменных окружения!")
+    print("📝 Добавьте переменную BOT_TOKEN в настройках Render")
+    exit(1)
+
+print("✅ Токен успешно загружен из переменных окружения")
 
 flirt_phrases = [
     "@luzha_ki Я красивый, а ты лужа, у нас будут прекрасные дети))~~",
@@ -19,12 +24,13 @@ flirt_phrases = [
 
 async def start(update, context):
     welcome_text = """
-🤖 Привет! Я жених лужи со следующими командами:
+🤖 Привет! я жених лужи со следующими командами:
 
 /tignari - Хочешь узнать обо мне?
 /flirt - Флиртующие сообщения для @luzha_ki  
 /throw - Бросить игральную кость 🎲
 
+Выбери команду и наслаждайся общением!
     """
     await update.message.reply_text(welcome_text)
 
