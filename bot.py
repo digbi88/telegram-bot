@@ -2,7 +2,7 @@ from telegram.ext import Application, CommandHandler
 import random
 import os
 
-BOT_TOKEN = os.environ.get('8189236321:AAExF6UWrS4ksDb--FdJwvq0HciSDqoMWeg')
+BOT_TOKEN = os.environ.get('BOT_TOKEN')
 
 flirt_phrases = [
     "@luzha_ki Я красивый, а ты лужа, у нас будут прекрасные дети))~~",
