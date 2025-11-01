@@ -2,7 +2,11 @@ from telegram.ext import Application, CommandHandler
 import random
 import os
 
-BOT_TOKEN = os.environ.get('BOT_TOKEN')
+# Токен встроен в код для тестирования
+BOT_TOKEN = "8189236321:AAExF6UWrS4ksDb--FdJwvq0HciSDqoMWeg"
+
+print("✅ Используется встроенный токен")
+print(f"Длина токена: {len(BOT_TOKEN)}")
 
 flirt_phrases = [
     "@luzha_ki Я красивый, а ты лужа, у нас будут прекрасные дети))~~",
@@ -15,7 +19,7 @@ flirt_phrases = [
 
 async def start(update, context):
     welcome_text = """
-🤖 Привет! Я бот со следующими командами:
+🤖 Привет! Я жених лужи со следующими командами:
 
 /tignari - Хочешь узнать обо мне?
 /flirt - Флиртующие сообщения для @luzha_ki  
@@ -35,11 +39,14 @@ async def throw(update, context):
     await update.message.reply_text("🎲")
 
 if __name__ == "__main__":
-    app = Application.builder().token(BOT_TOKEN).build()
-    app.add_handler(CommandHandler("start", start))
-    app.add_handler(CommandHandler("tignari", tignari))
-    app.add_handler(CommandHandler("flirt", flirt))
-    app.add_handler(CommandHandler("throw", throw))
-    
-    print("🤖 Бот запущен на Render!")
-    app.run_polling()
+    try:
+        app = Application.builder().token(BOT_TOKEN).build()
+        app.add_handler(CommandHandler("start", start))
+        app.add_handler(CommandHandler("tignari", tignari))
+        app.add_handler(CommandHandler("flirt", flirt))
+        app.add_handler(CommandHandler("throw", throw))
+        
+        print("🤖 Бот запущен на Render!")
+        app.run_polling()
+    except Exception as e:
+        print(f"❌ Ошибка запуска бота: {e}")
