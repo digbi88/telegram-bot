@@ -1,38 +1,36 @@
 from telegram.ext import Application, CommandHandler
 import random
 import os
-import asyncio
 from flask import Flask
 from threading import Thread
-import requests
 
-# Создаем Flask приложение для поддержания активности
+# Веб-сервер для поддержания активности
 app_flask = Flask('')
 
 @app_flask.route('/')
 def home():
-    return "🤖 Бот активен и работает!"
+    return "🤖 Бот активен! Команды: /start, /tignari, /flirt, /throw, /symphony"
+
+@app_flask.route('/health')
+def health():
+    return "OK"
 
 def run_flask():
-    port = int(os.environ.get('PORT', 8080))
+    port = int(os.environ.get('PORT', 10000))
     app_flask.run(host='0.0.0.0', port=port)
 
-def keep_alive():
-    t = Thread(target=run_flask)
-    t.daemon = True
-    t.start()
+# Запускаем Flask в отдельном потоке
+flask_thread = Thread(target=run_flask)
+flask_thread.daemon = True
+flask_thread.start()
 
-# Запускаем веб-сервер
-keep_alive()
-
-# Токен бота
 BOT_TOKEN = os.environ.get('BOT_TOKEN')
 
 if not BOT_TOKEN:
     print("❌ ОШИБКА: BOT_TOKEN не найден!")
     exit(1)
 
-print("✅ Токен загружен успешно")
+print("✅ Бот запущен на Render!")
 
 flirt_phrases = [
     "@luzha_ki Я красивый, а ты лужа, у нас будут прекрасные дети))~~",
@@ -55,13 +53,43 @@ flirt_phrases = [
     "@luzha_ki знаю ли я твою любимую песню? Конечно) это же: TOXIC ."
 ]
 
+# Единственная симфония - Симфония Лужи и Любви
+symphony_of_love = """
+🎼 **Симфония Лужи и Любви** - Тигнари
+
+**I. Allegro Appassionato (Страсть)**
+Струнные: бурное вступление, словно первые чувства
+Деревянные духовые: нежные мелодии, как шепот любви
+Медные: мощные аккорды - признание в любви
+
+**II. Adagio Romantico (Романтика)**
+Солирующая скрипка: нежная тема лужи
+Виолончель: глубокий ответ влюбленного
+Арфа: аккомпанемент, словно капли дождя
+
+**III. Scherzo Giocoso (Игривость)**
+Флейты: веселые переливы
+Кларнеты: шутливые мелодии
+Треугольник: блестящие капли
+
+**IV. Finale Trionfale (Триумф)**
+Весь оркестр: величественное соединение тем
+Хор: 'Лужа и любовь навеки!'
+Громоподобный финал: вечная связь
+
+*Посвящается всем влюблённым душам, находящим красоту в простом*
+"""
+
 async def start(update, context):
     welcome_text = """
 🤖 Привет! Я жених лужи со следующими командами:
 
 /tignari - Хочешь узнать обо мне?
-/flirt - Флиртующие сообщения для возлюбленной 
+/flirt - Флиртующие сообщения для @luzha_ki  
 /throw - Бросить игральную кость 🎲
+/symphony - Симфония Лужи и Любви
+
+Выбери команду и наслаждайся общением!
     """
     await update.message.reply_text(welcome_text)
 
@@ -75,34 +103,20 @@ async def flirt(update, context):
 async def throw(update, context):
     await update.message.reply_text("🎲")
 
-async def error_handler(update, context):
-    print(f"❌ Ошибка: {context.error}")
+async def symphony(update, context):
+    await update.message.reply_text(symphony_of_love)
 
 if __name__ == "__main__":
-    try:
-        app = Application.builder().token(BOT_TOKEN).build()
-        
-        # Добавляем обработчики
-        app.add_handler(CommandHandler("start", start))
-        app.add_handler(CommandHandler("tignari", tignari))
-        app.add_handler(CommandHandler("flirt", flirt))
-        app.add_handler(CommandHandler("throw", throw))
-        
-        # Обработчик ошибок
-        app.add_error_handler(error_handler)
-        
-        print("🤖 Бот запущен на Render!")
-        print(f"📝 Доступно {len(flirt_phrases)} флирт-фраз")
-        print("🌐 Веб-сервер запущен для поддержания активности")
-        
-        # Запускаем бота
-        app.run_polling(
-            drop_pending_updates=True,
-            allowed_updates=["message", "callback_query"]
-        )
-        
-    except Exception as e:
-        print(f"❌ Критическая ошибка: {e}")
-        # Перезапуск через 10 секунд при критической ошибке
-        asyncio.run(asyncio.sleep(10))
-        os.execv(__file__, sys.argv)
+    app = Application.builder().token(BOT_TOKEN).build()
+    app.add_handler(CommandHandler("start", start))
+    app.add_handler(CommandHandler("tignari", tignari))
+    app.add_handler(CommandHandler("flirt", flirt))
+    app.add_handler(CommandHandler("throw", throw))
+    app.add_handler(CommandHandler("symphony", symphony))
+    
+    print(f"📝 Доступно {len(flirt_phrases)} флирт-фраз")
+    print("🎵 Доступна Симфония Лужи и Любви")
+    print("🌐 Веб-сервер запущен")
+    print("🚀 Бот готов к работе!")
+    
+    app.run_polling()
