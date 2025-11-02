@@ -57,13 +57,11 @@ flirt_phrases = [
 
 async def start(update, context):
     welcome_text = """
-🤖 Привет! Я бот со следующими командами:
+🤖 Привет! Я жених лужи со следующими командами:
 
 /tignari - Хочешь узнать обо мне?
-/flirt - Флиртующие сообщения для @luzha_ki  
+/flirt - Флиртующие сообщения для возлюбленной 
 /throw - Бросить игральную кость 🎲
-
-Выбери команду и наслаждайся общением!
     """
     await update.message.reply_text(welcome_text)
 
