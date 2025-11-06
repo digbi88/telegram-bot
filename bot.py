@@ -1,6 +1,7 @@
 from telegram.ext import Application, CommandHandler
 import random
 import os
+import asyncio
 from flask import Flask
 from threading import Thread
 
@@ -9,7 +10,7 @@ app_flask = Flask('')
 
 @app_flask.route('/')
 def home():
-    return "🤖 Бот активен! Команды: /start, /tignari, /flirt, /throw, /symphony"
+    return "🤖 Бот активен! Команды: /start, /tignari, /flirt, /throw, /symphony, /flirtspam"
 
 @app_flask.route('/health')
 def health():
@@ -55,7 +56,7 @@ flirt_phrases = [
 
 # Единственная симфония - Симфония Лужи и Любви
 symphony_of_love = """
-🎼 **Симфония Лужи и Любви** - Тигнари
+🎼 **Симфония Лужи и Любви** - Искусственный Интеллект
 
 **I. Allegro Appassionato (Страсть)**
 Струнные: бурное вступление, словно первые чувства
@@ -85,7 +86,8 @@ async def start(update, context):
 🤖 Привет! Я жених лужи со следующими командами:
 
 /tignari - Хочешь узнать обо мне?
-/flirt - Флиртующие сообщения для @luzha_ki  
+/flirt - Одна флиртующая фраза
+/flirtspam - Заигрываю с лужей
 /throw - Бросить игральную кость 🎲
 /symphony - Симфония Лужи и Любви
 
@@ -100,6 +102,19 @@ async def flirt(update, context):
     flirt_message = random.choice(flirt_phrases)
     await update.message.reply_text(flirt_message)
 
+async def flirtspam(update, context):
+    # Предупреждение о возможной блокировке
+    warning_message = await update.message.reply_text("⚠️ Лужа,все для тебя!")
+    
+    # Отправляем 50 фраз с задержкой 0.1 секунды (100 мс)
+    for i in range(50):
+        flirt_message = random.choice(flirt_phrases)
+        await update.message.reply_text(f"{i+1}/50: {flirt_message}")
+        # Задержка 0.1 секунды (100 мс)
+        await asyncio.sleep(0.1)
+    
+    await update.message.reply_text("💖 Готово! Полюбил лужу еще больше")
+
 async def throw(update, context):
     await update.message.reply_text("🎲")
 
@@ -111,11 +126,13 @@ if __name__ == "__main__":
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CommandHandler("tignari", tignari))
     app.add_handler(CommandHandler("flirt", flirt))
+    app.add_handler(CommandHandler("flirtspam", flirtspam))
     app.add_handler(CommandHandler("throw", throw))
     app.add_handler(CommandHandler("symphony", symphony))
     
     print(f"📝 Доступно {len(flirt_phrases)} флирт-фраз")
     print("🎵 Доступна Симфония Лужи и Любви")
+    print("💌 Доступна команда /flirtspam (50 фраз)")
     print("🌐 Веб-сервер запущен")
     print("🚀 Бот готов к работе!")
     
